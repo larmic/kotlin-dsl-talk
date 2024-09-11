@@ -3,7 +3,7 @@ package de.larmic.kotlindsltalk.slides
 import de.larmic.kotlindsltalk.slides.Conference.KKON
 
 val p = presentation {
-    title = "Kotlin DSL"
+    title = "Eine Einführung in Kotlin DSL"
     conference = KKON
     date = 16 SEPTEMBER 2024
 

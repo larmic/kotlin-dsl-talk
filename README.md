@@ -16,3 +16,26 @@ In diesem Vortrag lernst Du:
 ## Script
 
 ### Vorstellung des Projekts
+
+### DSL
+
+#### Warum ist eine DSL
+
+Definition: Eine Domain-Specific Language ist eine Sprache, die speziell für eine bestimmte Anwendungsdomäne entwickelt wurde.  
+Beispiele: HTML, SQL, Gradle, ...
+
+* Erhöhte Produktivität und Lesbarkeit.
+* Fokussierung auf das Problem statt auf Implementierungsdetails.
+* Vereinfachung der Kommunikation zwischen Entwicklern und Domänenexperten.
+
+#### Infix
+
+-> fluent Api im Controller
+
+#### Extension Functions
+
+-> Test des Controllers  
+--> DTO Factory mit Extension Functions
+
+#### Type Inference
+

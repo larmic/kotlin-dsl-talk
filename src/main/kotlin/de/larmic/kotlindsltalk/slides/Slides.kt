@@ -7,6 +7,8 @@ val p = presentation {
     conference = KKON
     date = 16 SEPTEMBER 2024
 
+    github = "https://github.com/larmic/kotlin-dsl-talk"
+
     speaker {
         name = "Lars Michaelis"
         email = "l.michaelis@neusta.de"

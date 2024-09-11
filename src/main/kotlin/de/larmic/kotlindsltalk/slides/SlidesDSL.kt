@@ -40,6 +40,7 @@ class Presentation {
     var date: LocalDate = LocalDate.now()
     var conference: Conference = Conference.KKON
     var speaker: Speaker = Speaker()
+    var github: String = ""
 
     fun speaker(init: Speaker.() -> Unit) {
         speaker.init()

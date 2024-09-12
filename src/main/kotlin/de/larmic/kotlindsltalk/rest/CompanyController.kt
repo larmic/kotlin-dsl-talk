@@ -8,10 +8,9 @@ import org.springframework.web.bind.annotation.*
 import java.util.UUID
 
 @RestController
-@RequestMapping("api/company")
 class CompanyController(private val companyRepository: CompanyRepository) {
 
-    @PostMapping("/", consumes = ["application/json"], produces = ["application/json"])
+    @PostMapping("api/company/", consumes = ["application/json"], produces = ["application/json"])
     fun create(@RequestBody dto: CreateCompanyDto) : ReadCompanyDto {
         val companyEntity = mapToEntity(dto)
         companyRepository.save(companyEntity)

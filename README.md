@@ -39,6 +39,20 @@ Beispiele: HTML, SQL, Gradle, ...
 #### Extension Functions
 
 -> fluent Api im Controller
+```kotlin
+fun create(@RequestBody dto: CreateCompanyDto) = dto
+        .mapToEntity()
+        .storyInDatabase()
+        .mapToDto()
+
+fun readTweet(@PathVariable id: Long): ResponseEntity<ReadCompanyDto> {
+    if (companyRepository exists id) {
+        return companyRepository.get(id).wrapInResponse()
+    }
+
+    return ResponseEntity.notFound().build()
+}
+```
 
 -> Test des Controllers  
 --> DTO Factory mit Extension Functions

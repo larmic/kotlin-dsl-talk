@@ -15,11 +15,6 @@ In diesem Vortrag lernst Du:
 
 ## Script
 
-### Vorstellung des Projekts
-
-* Erklären CompanyRepository.kt
-* Erklären CompanyController.kt
-
 ### DSL
 
 #### Warum ist eine DSL
@@ -31,14 +26,24 @@ Beispiele: HTML, SQL, Gradle, ...
 * Fokussierung auf das Problem statt auf Implementierungsdetails.
 * Vereinfachung der Kommunikation zwischen Entwicklern und Domänenexperten.
 
+#### Vorstellung des Projekts
+
+* Erklären CompanyRepository.kt
+* Erklären CompanyController.kt inkl. CompanyControllerTest.kt
+
 #### Infix
 
--> fluent Api im Controller
+-> CompanyRepository#exits() mit infix   
+--> Aufruf im CompanyController.kt anpassen
 
 #### Extension Functions
+
+-> fluent Api im Controller
 
 -> Test des Controllers  
 --> DTO Factory mit Extension Functions
 
 #### Type Inference
+
+#### Lambda with Receiver
 

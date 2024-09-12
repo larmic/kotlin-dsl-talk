@@ -152,3 +152,155 @@ class CreateCompanyDtoBuilder
 ```
 
 Dann werden die Felder immer noch angeboten, aber der Compiler verhindert eine Nutzung
+
+**Jetzt haben wir alles, was wir zum schreiben von DSLs benötigen**
+
+#### WebTestFactory.kt
+
+Was ich gerne hätte
+
+```kotlin
+apiTest(mockMvc) {
+    post("/api/company/") {
+        prepare {
+            // mocking stuff
+        }
+        body {
+            // body dsl stuff
+        }
+        verify {
+            // status, content, ...
+        }
+    }
+}
+```
+
+WebTestFactory.kt
+```kotlin
+@MyDsl
+class PostBuilder(private val contextPath: String) {
+
+    var preparation: (Any.() -> Unit)? = null
+    var body: String = ""
+    var validation: (MockMvcResultMatchersDsl.() -> Unit)? = null
+
+    fun prepare(block: Any.() -> Unit) {
+        this.preparation = block
+    }
+
+    fun body(block: CreateCompanyDtoBuilder.() -> Unit) {
+        this.body = CreateCompanyDtoBuilder().apply(block).buildJson()
+    }
+
+    fun verify(dsl: MockMvcResultMatchersDsl.() -> Unit) {
+        this.validation = dsl
+    }
+}
+
+fun post(contextPath: String, block: PostBuilder.() -> Unit) {
+    PostBuilder(contextPath).apply(block)
+}
+```
+
+CompanyControllerTest.kt
+```kotlin
+@Test
+fun `create a new company`() {
+    post("/api/company/") {
+        prepare {
+            every { companyRepositoryMock.save(any()) } returnsArgument 0
+        }
+        body {
+            name = "Panzerknacker AG"
+            employee {
+                name = "Karlchen Knack"
+                email = "karlchen@knack.de"
+            }
+            employee {
+                name = "Kuno Knack"
+                email = "kuno@knack.de"
+            }
+        }
+        verify {
+            status { isOk() }
+            content { contentType(MediaType.APPLICATION_JSON) }
+            content { jsonPath("$.id") { exists() } }
+            content { jsonPath("$.name") { value("Panzerknacker AG") } }
+            content { jsonPath("$.employees[0].id") { exists() } }
+            content { jsonPath("$.employees[0].name") { value("Karlchen Knack") } }
+            content { jsonPath("$.employees[0].email") { value("karlchen@knack.de") } }
+            content { jsonPath("$.employees[1].id") { exists() } }
+            content { jsonPath("$.employees[1].name") { value("Kuno Knack") } }
+            content { jsonPath("$.employees[1].email") { value("kuno@knack.de") } }
+        }
+    }
+}
+```
+
+Es fehlt der Rahmen
+
+```kotlin
+class ApiTestBuilder(private val mockMvc: MockMvc) {
+
+    private var postBuilder: PostBuilder? = null
+
+    fun post(contextPath: String, block: PostBuilder.() -> Unit) {
+        this.postBuilder = PostBuilder(contextPath).apply(block)
+    }
+
+    fun execute() {
+        postBuilder?.let {
+            it.preparation?.invoke {}
+
+            val post = mockMvc.post(it.contextPath) {
+                contentType = MediaType.APPLICATION_JSON
+                content = it.body
+            }
+
+            if (it.validation != null) {
+                post.andExpect(it.validation!!)
+            }
+        }
+    }
+}
+
+fun apiTest(mockMvc: MockMvc, block: ApiTestBuilder.() -> Unit) = ApiTestBuilder(mockMvc).apply(block).execute()
+```
+
+Anpassung Test + Ausführen
+
+```kotlin
+@Test
+fun `create a new company`() {
+    apiTest(mockMvc) {
+        post("/api/company/") {
+            prepare {
+                every { companyRepositoryMock.save(any()) } returnsArgument 0
+            }
+            body {
+                name = "Panzerknacker AG"
+                employee {
+                    name = "Karlchen Knack"
+                    email = "karlchen@knack.de"
+                }
+                employee {
+                    name = "Kuno Knack"
+                    email = "kuno@knack.de"
+                }
+            }
+            verify {
+                status { isOk() }
+                content { contentType(MediaType.APPLICATION_JSON) }
+                content { jsonPath("$.id") { exists() } }
+                content { jsonPath("$.name") { value("Panzerknacker AG") } }
+                content { jsonPath("$.employees[0].id") { exists() } }
+                content { jsonPath("$.employees[0].name") { value("Karlchen Knack") } }
+                content { jsonPath("$.employees[0].email") { value("karlchen@knack.de") } }
+                content { jsonPath("$.employees[1].id") { exists() } }
+                content { jsonPath("$.employees[1].name") { value("Kuno Knack") } }
+                content { jsonPath("$.employees[1].email") { value("kuno@knack.de") } }
+            }
+        }
+    }
+}
+```

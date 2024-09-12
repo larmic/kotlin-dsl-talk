@@ -1,7 +1,6 @@
 package de.larmic.kotlindsltalk.database
 
 import org.springframework.stereotype.Repository
-import java.time.LocalDateTime
 import java.util.UUID
 
 @Repository
@@ -21,16 +20,12 @@ class CompanyRepository {
 
 class CompanyEntity(
     val id: UUID = UUID.randomUUID(),
-    val createDate: LocalDateTime = LocalDateTime.now(),
-    var lastUpdateDate: LocalDateTime = LocalDateTime.now(),
     var name: String,
     val employees: MutableList<EmployeeEntity> = mutableListOf(),
 )
 
 class EmployeeEntity(
     val id: UUID = UUID.randomUUID(),
-    val createDate: LocalDateTime = LocalDateTime.now(),
-    var lastUpdateDate: LocalDateTime = LocalDateTime.now(),
     var name: String,
     var email: String,
 )

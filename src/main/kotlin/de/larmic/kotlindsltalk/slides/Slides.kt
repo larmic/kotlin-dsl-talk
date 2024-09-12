@@ -12,7 +12,7 @@ val p = presentation {
     speaker {
         name = "Lars Michaelis"
         email = "l.michaelis@neusta.de"
-        jobTitle = "Solution Architect"
+        jobTitle = "Solution Architect, Technical Coach"
 
         social {
             linkedIn = "https://www.linkedin.com/in/lars-michaelis-6778761b3/"

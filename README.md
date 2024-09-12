@@ -38,9 +38,11 @@ Beispiele: HTML, SQL, Gradle, ...
 
 #### Extension Functions
 
+Erlaubt es, Klassen nachträglich zu erweitern und macht den Code lesbarer.
+
 -> fluent Api im Controller
 ```kotlin
-fun create(@RequestBody dto: CreateCompanyDto) = dto
+fun create(@RequestBody dto: CreateCompanyDto) : ReadCompanyDto = dto
         .mapToEntity()
         .storyInDatabase()
         .mapToDto()
@@ -54,10 +56,99 @@ fun readTweet(@PathVariable id: Long): ResponseEntity<ReadCompanyDto> {
 }
 ```
 
--> Test des Controllers  
---> DTO Factory mit Extension Functions
-
 #### Type Inference
+
+Keine Angabe des Type: Macht die DSLs kompakter und intuitiver.
+
+```kotlin
+var name : String = "this is a string"
+var name = "this is a string"
+
+// kein expliziter Rückgabewert angegeben
+fun create(@RequestBody dto: CreateCompanyDto) = dto
+        .mapToEntity()
+        .storyInDatabase()
+        .mapToDto()
+```
 
 #### Lambda with Receiver
 
+-> Test des Controllers  
+--> DTO Factory mit Lambda with receiver
+
+Was ich gerne hätte
+```kotlin
+content = body {
+    name = "Panzerknacker AG"
+    employee {
+        name = "Karlchen Knack"
+        email = "karlchen@knack.de"
+    }
+    employee {
+        name = "Kuno Knack"
+        email = "kuno@knack.de"
+    }
+}
+```
+
+Erzeugen einer TestDataFactory.kt
+
+1. Builder erzeugen
+```kotlin
+// einfacher Builder
+class CreateEmployeeDtoBuilder {
+    var name: String = "Donald Duck"
+    var email: String = "donald@duck.de"
+
+    fun build() = CreateEmployeeDto(name = name, email = email)
+}
+
+class CreateCompanyDtoBuilder(private val employees: MutableList<CreateEmployeeDto> = mutableListOf()) {
+    var name: String = "Entenhausen AG"
+
+    fun buildJson() = jacksonObjectMapper().writeValueAsString(CreateCompanyDto(name = name, employees = employees))
+}
+```
+
+2. Lambda with Receiver
+```kotlin
+class CreateCompanyDtoBuilder(private val employees: MutableList<CreateEmployeeDto> = mutableListOf()) {
+    var name: String = "Entenhausen AG"
+
+    // init: CreateEmployeeDtoBuilder.() -> Unit bedeutet, dass das Lambda, das als Argument übergeben wird, den Typ CreateEmployeeDtoBuilder als Receiver hat. 
+    // Innerhalb des Lambdas können alle Eigenschaften und Methoden von Tag direkt aufgerufen werden.
+    fun employee(init: CreateEmployeeDtoBuilder.() -> Unit) {
+        val builder = CreateEmployeeDtoBuilder()    // default Werte
+        builder.init()                              // Überschreiben der Default-Werte
+        employees.add(builder.build())
+    }
+    
+    fun buildJson() = jacksonObjectMapper().writeValueAsString(CreateCompanyDto(name = name, employees = employees))
+}
+```
+
+3. Vereinfachen des Lambdas with receiver
+```kotlin
+// init in sprechenderes block umbenannt
+fun employee(block: CreateEmployeeDtoBuilder.() -> Unit) {
+    employees.add(CreateEmployeeDtoBuilder().apply(block).build())
+}
+```
+
+#### @DslMarker
+
+* Autocompletion bietet mir alle Felder an
+* Employee kann in Employee verschachtelt werden
+
+```kotlin
+@DslMarker
+annotation class MyDsl
+
+@MyDsl
+class CreateEmployeeDtoBuilder
+
+@MyDsl
+class CreateCompanyDtoBuilder
+```
+
+Dann werden die Felder immer noch angeboten, aber der Compiler verhindert eine Nutzung

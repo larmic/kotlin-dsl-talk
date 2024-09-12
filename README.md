@@ -54,6 +54,8 @@ fun readTweet(@PathVariable id: Long): ResponseEntity<ReadCompanyDto> {
 
     return ResponseEntity.notFound().build()
 }
+
+private fun CompanyEntity.storeInDatabase() = companyRepository.save(this)
 ```
 
 #### Type Inference

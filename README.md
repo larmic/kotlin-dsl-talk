@@ -17,6 +17,9 @@ In diesem Vortrag lernst Du:
 
 ### Vorstellung des Projekts
 
+* Erklären CompanyRepository.kt
+* Erklären CompanyController.kt
+
 ### DSL
 
 #### Warum ist eine DSL

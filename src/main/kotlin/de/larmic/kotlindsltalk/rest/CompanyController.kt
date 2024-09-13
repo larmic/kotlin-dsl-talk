@@ -17,7 +17,7 @@ class CompanyController(private val companyRepository: CompanyRepository) {
         return mapToDto(companyEntity)
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("api/company/{id}")
     fun getCompany(@PathVariable id: UUID): ResponseEntity<ReadCompanyDto> {
         if (companyRepository.exists(id)) {
             val companyEntity = companyRepository.get(id)

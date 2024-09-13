@@ -112,48 +112,32 @@ class CreateCompanyDtoBuilder(private val employees: MutableList<CreateEmployeeD
 }
 ```
 
+2. Lambda with Receiver erstellen, um Builder nutzen zu können
+```kotlin
+// init: CreateCompanyDtoBuilder.() -> Unit bedeutet, dass das Lambda, das als Argument übergeben wird, den Typ CreateCompanyDtoBuilder als Receiver hat.
+// Innerhalb des Lambdas können alle Eigenschaften und Methoden von Tag direkt aufgerufen werden.
+fun body(init: CreateCompanyDtoBuilder.() -> Unit): String {
+    val builder = CreateCompanyDtoBuilder()
+    builder.init()
+    return builder.buildJson()
+}
+
+// lesbarer
+fun body(block: CreateCompanyDtoBuilder.() -> Unit) = CreateCompanyDtoBuilder().apply(block).buildJson()
+```
+
 2. Lambda with Receiver
 ```kotlin
 class CreateCompanyDtoBuilder(private val employees: MutableList<CreateEmployeeDto> = mutableListOf()) {
     var name: String = "Entenhausen AG"
 
-    // init: CreateEmployeeDtoBuilder.() -> Unit bedeutet, dass das Lambda, das als Argument übergeben wird, den Typ CreateEmployeeDtoBuilder als Receiver hat. 
-    // Innerhalb des Lambdas können alle Eigenschaften und Methoden von Tag direkt aufgerufen werden.
     fun employee(init: CreateEmployeeDtoBuilder.() -> Unit) {
-        val builder = CreateEmployeeDtoBuilder()    // default Werte
-        builder.init()                              // Überschreiben der Default-Werte
-        employees.add(builder.build())
+        employees.add(CreateEmployeeDtoBuilder().apply(block).build())
     }
     
     fun buildJson() = jacksonObjectMapper().writeValueAsString(CreateCompanyDto(name = name, employees = employees))
 }
 ```
-
-3. Vereinfachen des Lambdas with receiver
-```kotlin
-// init in sprechenderes block umbenannt
-fun employee(block: CreateEmployeeDtoBuilder.() -> Unit) {
-    employees.add(CreateEmployeeDtoBuilder().apply(block).build())
-}
-```
-
-#### @DslMarker
-
-* Autocompletion bietet mir alle Felder an
-* Employee kann in Employee verschachtelt werden
-
-```kotlin
-@DslMarker
-annotation class MyDsl
-
-@MyDsl
-class CreateEmployeeDtoBuilder
-
-@MyDsl
-class CreateCompanyDtoBuilder
-```
-
-Dann werden die Felder immer noch angeboten, aber der Compiler verhindert eine Nutzung
 
 **Jetzt haben wir alles, was wir zum schreiben von DSLs benötigen**
 
@@ -306,3 +290,21 @@ fun `create a new company`() {
     }
 }
 ```
+
+#### @DslMarker
+
+* Autocompletion bietet mir alle Felder an
+* Employee kann in Employee verschachtelt werden
+
+```kotlin
+@DslMarker
+annotation class MyDsl
+
+@MyDsl
+class CreateEmployeeDtoBuilder
+
+@MyDsl
+class CreateCompanyDtoBuilder
+```
+
+Dann werden die Felder immer noch angeboten, aber der Compiler verhindert eine Nutzung

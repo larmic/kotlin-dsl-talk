@@ -15,7 +15,7 @@ class CompanyRepository {
 
     fun get(id: UUID) = companies[id]!!
 
-    fun exists(id: UUID) = companies.get(id) != null
+    fun exists(id: UUID) = companies[id] != null
 }
 
 class CompanyEntity(

@@ -9,7 +9,7 @@ class CompanyRepository {
     private val companies = mutableMapOf<UUID, CompanyEntity>()
 
     fun save(company: CompanyEntity): CompanyEntity {
-        companies.put(company.id, company)
+        companies[company.id] = company
         return company
     }
 

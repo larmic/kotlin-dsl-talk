@@ -1,6 +1,8 @@
 package de.larmic.kotlindsltalk.slides
 
 import de.larmic.kotlindsltalk.slides.Conference.KKON
+import java.time.LocalDate
+import java.time.Month
 
 val p = presentation {
     title = "Eine Einführung in Kotlin DSL"
@@ -27,7 +29,7 @@ val p = presentation {
     }
 }
 
-fun bad() {
+fun `presentation in bad`() {
     val company = Company()
     company.name = "Team Neusta"
     company.city = "Bremen"
@@ -47,7 +49,7 @@ fun bad() {
     val presentation = Presentation()
     presentation.title = "Eine Einführung in Kotlin DSL"
     presentation.conference = KKON
-    presentation.date = 16 SEPTEMBER 2024
+    presentation.date = LocalDate.of(2024, Month.SEPTEMBER, 16)
     presentation.github = "https://github.com/larmic/kotlin-dsl-talk"
     presentation.speaker = speaker
 }

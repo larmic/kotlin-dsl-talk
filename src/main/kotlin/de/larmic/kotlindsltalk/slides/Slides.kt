@@ -29,7 +29,7 @@ val p = presentation {
     }
 }
 
-fun `presentation in bad`() {
+fun `presentation`() {
     val company = Company()
     company.name = "Team Neusta"
     company.city = "Bremen"
